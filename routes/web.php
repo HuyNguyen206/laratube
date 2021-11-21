@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ChannelController;
+use App\Http\Controllers\SubscriptionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,5 +21,5 @@ Route::get('/', function () {
 
 Auth::routes();
 Route::resource('channels', ChannelController::class);
-
+Route::resource('channels.subscriptions', SubscriptionController::class)->shallow();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

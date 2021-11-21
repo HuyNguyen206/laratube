@@ -2103,6 +2103,8 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 window.Vue = (__webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js")["default"]);
+
+__webpack_require__(/*! ./components/subscribe-button */ "./resources/js/components/subscribe-button.js");
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -2112,6 +2114,7 @@ window.Vue = (__webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js
  */
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
+
 
 Vue.component('example-component', (__webpack_require__(/*! ./components/ExampleComponent.vue */ "./resources/js/components/ExampleComponent.vue")["default"]));
 /**
@@ -2167,6 +2170,39 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 //     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
 //     forceTLS: true
 // });
+
+/***/ }),
+
+/***/ "./resources/js/components/subscribe-button.js":
+/*!*****************************************************!*\
+  !*** ./resources/js/components/subscribe-button.js ***!
+  \*****************************************************/
+/***/ (() => {
+
+Vue.component('subscribe-button', {
+  props: {
+    channelUserId: {
+      type: String,
+      required: true
+    },
+    subscribers: {
+      type: Array,
+      "default": []
+    }
+  },
+  methods: {
+    subscribe: function subscribe() {
+      if (!authUser) {
+        alert('Please login to subscribe the channel');
+      }
+    }
+  },
+  computed: {
+    customCursor: function customCursor() {
+      return !authUser || authUser.id === this.channelUserId ? 'cursor: auto' : '';
+    }
+  }
+});
 
 /***/ }),
 

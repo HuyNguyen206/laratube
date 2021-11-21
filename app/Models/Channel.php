@@ -27,4 +27,14 @@ class Channel extends Model implements HasMedia
     {
         return optional($this->getFirstMedia('images'))->getFullUrl('thumb');
     }
+
+    public function canUpdateByCurrentUser()
+    {
+        return auth()->check() && $this->user_id === auth()->id();
+    }
+
+    public function subscribers()
+    {
+        return $this->belongsToMany(User::class, 'subscriptions');
+    }
 }
