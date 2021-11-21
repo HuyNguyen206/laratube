@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Chelout\RelationshipEvents\Concerns\HasBelongsToManyEvents;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -12,7 +13,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasBelongsToManyEvents;
 
     public $incrementing = false;
 
@@ -61,6 +62,6 @@ class User extends Authenticatable
 
     public function subscribedChannels()
     {
-        return $this->belongsToMany(Channel::class,'subscriptions');
+        return $this->belongsToMany(Channel::class,'subscriptions')->using(Subscription::class)->withPivot('id')->withTimestamps();
     }
 }

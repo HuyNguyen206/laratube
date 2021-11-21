@@ -2190,6 +2190,7 @@ Vue.component('subscribe-button', {
       "default": []
     }
   },
+  // props: ['channelUserId', 'subscribers'],
   methods: {
     subscribe: function subscribe() {
       if (!authUser) {
