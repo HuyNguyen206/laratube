@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ChannelController;
 use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\UploadVideoController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,5 +22,13 @@ Route::get('/', function () {
 
 Auth::routes();
 Route::resource('channels', ChannelController::class);
-Route::resource('channels.subscriptions', SubscriptionController::class)->shallow();
+
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::middleware('auth')->group(function(){
+//    Route::resource('channels.subscriptions', SubscriptionController::class)->shallow();
+    Route::post('subscribers/channels/{channel}',[SubscriptionController::class, 'toggleSubscriber']);
+    Route::get('channels/upload-video/{channel}', [UploadVideoController::class, 'index'])->name('upload-video.index');
+    Route::post('channels/upload-video/{channel}', [UploadVideoController::class, 'store']);
+});
+

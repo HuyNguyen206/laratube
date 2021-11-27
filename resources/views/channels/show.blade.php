@@ -5,25 +5,17 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
-                    <div class="card-header">{{ $channel->name }}</div>
+                    <div class="card-header d-flex justify-content-between">
+                        {{ $channel->name }}
+                        <a href="{{route('upload-video.index', $channel->id)}}">Upload videos</a>
+                    </div>
 
                     <div class="card-body">
                         @php
                             $isAuthorizeToUpdate = $channel->canUpdateByCurrentUser();
                         @endphp
                         @if ($isAuthorizeToUpdate)
-                            @if($error = session('error'))
-                                <div class="alert alert-danger">
-                                    {{$error}}
-                                </div>
-
-                            @endif
-                            @if($success = session('success'))
-                                <div class="alert alert-success">
-                                    {{$success}}
-                                </div>
-
-                            @endif
+                            @include('layouts.partial.show-message')
                             <form id="update-form-channel" enctype="multipart/form-data" action="{{route('channels.update', $channel->id)}}" class="form" method="post">
                                 @csrf
                                 @method('put')
