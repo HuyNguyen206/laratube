@@ -2274,7 +2274,9 @@ Vue.component('upload-video', {
     return {
       selected: false,
       videos: [],
-      progress: {}
+      progress: {},
+      uploadData: [],
+      intervals: {}
     };
   },
   methods: {
@@ -2297,16 +2299,47 @@ Vue.component('upload-video', {
 
             _this.$forceUpdate();
           }
+        }).then(function (_ref) {
+          var data = _ref.data;
+
+          _this.uploadData.push(data.data);
+        });
+      });
+      axios.all(uploaders).then(function () {
+        _this.videos = _this.uploadData;
+
+        _this.videos.forEach(function (video) {
+          _this.intervals[video.id] = setInterval(function () {
+            axios.get("/channels/videos/".concat(video.id)).then(function (res) {
+              if (res.data.data.custom_properties.percentage === 100) {
+                clearInterval(_this.intervals[video.id]);
+              }
+
+              _this.videos = _this.videos.map(function (v) {
+                return v.id === res.data.data.id ? res.data.data : v;
+              });
+            });
+          }, 3000);
         });
       });
     },
     getProgress: function getProgress(video, index) {
-      var _this$progress$nameVi;
+      var _video$custom_propert;
+
+      if (video !== null && video !== void 0 && (_video$custom_propert = video.custom_properties) !== null && _video$custom_propert !== void 0 && _video$custom_propert.percentage) {
+        return video.custom_properties.percentage + '%';
+      }
 
       var nameVideo = "".concat(index, "_").concat(video.name);
-      var progress = (_this$progress$nameVi = this.progress[nameVideo]) !== null && _this$progress$nameVi !== void 0 ? _this$progress$nameVi : 0;
+      var progress = this.progress[nameVideo];
       console.log('getProgress: ', progress);
       return progress + '%';
+    },
+    getResultProcess: function getResultProcess(video) {
+      var _video$custom_propert2;
+
+      var percentage = video === null || video === void 0 ? void 0 : (_video$custom_propert2 = video.custom_properties) === null || _video$custom_propert2 === void 0 ? void 0 : _video$custom_propert2.percentage;
+      return percentage ? percentage === 100 ? 'Video Processing complete' : 'Processing' : 'Uploading';
     }
   }
 });

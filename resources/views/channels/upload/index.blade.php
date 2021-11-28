@@ -21,17 +21,25 @@
                     <div v-else>
                         <div class="my-4" v-for="(video, index) in videos" :key="index">
                             <div class="progress mb-3">
-                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" :style="{'width': getProgress(video, index)}" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" :style="{width: getProgress(video, index)}" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
+                                    @{{ getResultProcess(video) }}
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-4">
-                                    <div class="d-flex justify-content-center align-items-center" style="height: 180px; color: white; font-size: 18px; background: #808080">
-                                        Loading thumbnail...
+                                    <div v-if="video?.custom_properties?.percentage" class="d-flex justify-content-center align-items-center" style="height: 180px; color: white; font-size: 18px; background: #808080">
+                                        <img style="width: 100%;height:100%;" :src="video.custom_properties.thumbnail" alt="">
                                     </div>
+                                    <p v-else>
+                                        Loading thumbnail...
+                                    </p>
                                 </div>
                                 <div class="col-md-4">
-                                    <h4 class="text-danger">
-                                        @{{ video.name }}
+                                    <a :href="`/videos/${video.id}`" target="_blank" v-if="video?.custom_properties?.percentage && video?.custom_properties?.percentage === 100">
+                                        @{{ video?.custom_properties?.title }}
+                                    </a>
+                                    <h4 v-else class="text-danger">
+                                        @{{ video?.custom_properties?.title || video.name }}
                                     </h4>
                                 </div>
                             </div>

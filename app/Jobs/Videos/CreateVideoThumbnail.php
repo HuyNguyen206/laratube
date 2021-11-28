@@ -43,7 +43,8 @@ class CreateVideoThumbnail implements ShouldQueue
         ->export()
         ->toDisk('public')
         ->save($savePath);
-        $this->media->setCustomProperty('thumbnail', $savePath)->save();
+        $thumbnailPath = Storage::url($savePath);
+        $this->media->setCustomProperty('thumbnail', $thumbnailPath)->save();
 
     }
 }

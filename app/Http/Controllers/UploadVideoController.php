@@ -20,6 +20,7 @@ class UploadVideoController extends Controller
         $media = $channel->addMediaFromRequest('video')
             ->withCustomProperties(['title' => \request()->title, 'description' => \request()->description])
             ->toMediaCollection('videos');
+
         $this->dispatch(new CreateVideoThumbnail($media));
         $this->dispatch(new ConvertForStreaming($media));
         return response()->success($media);

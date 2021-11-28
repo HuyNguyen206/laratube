@@ -1,14 +1,16 @@
 Vue.component('upload-video', {
-    props:['channel'],
-    data(){
+    props: ['channel'],
+    data() {
         return {
-            selected:false,
+            selected: false,
             videos: [],
-            progress: {}
+            progress: {},
+            uploadData: [],
+            intervals: {}
         }
     },
 
-    methods:{
+    methods: {
         upload() {
             this.selected = true
             this.videos = Array.from(this.$refs.videos.files)
@@ -22,17 +24,47 @@ Vue.component('upload-video', {
                 return axios.post(`/channels/upload-video/${this.channel.id}`, form, {
                     onUploadProgress: (event) => {
                         console.log(event)
-                        this.progress[nameVideo] = Math.ceil((event.loaded / event.total)* 100)
+                        this.progress[nameVideo] = Math.ceil((event.loaded / event.total) * 100)
                         this.$forceUpdate()
                     }
                 })
+                    .then(({data}) => {
+                        this.uploadData.push(data.data)
+                    })
+
             })
+            axios.all(uploaders)
+                .then(() => {
+                    this.videos = this.uploadData
+                    this.videos.forEach((video) => {
+                        this.intervals[video.id] = setInterval(() => {
+                            axios.get(`/channels/videos/${video.id}`)
+                                .then(res => {
+                                    if (res.data.data.custom_properties.percentage === 100) {
+                                        clearInterval(this.intervals[video.id])
+                                    }
+                                    this.videos = this.videos.map(v => {
+                                        return v.id === res.data.data.id ? res.data.data : v
+                                    })
+                                })
+                        }, 3000)
+                    })
+                })
         },
         getProgress(video, index) {
+            if (video?.custom_properties?.percentage) {
+                return video.custom_properties.percentage + '%'
+            }
             let nameVideo = `${index}_${video.name}`
-            let progress = this.progress[nameVideo] ?? 0
-            console.log('getProgress: ',progress)
+            let progress = this.progress[nameVideo]
+            console.log('getProgress: ', progress)
             return progress + '%'
+        },
+        getResultProcess(video) {
+            let percentage = video?.custom_properties?.percentage
+            return percentage ? (percentage === 100 ? 'Video Processing complete' : 'Processing')
+                : 'Uploading'
+
         }
     }
 })

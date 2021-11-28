@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ChannelRequest;
 use App\Models\Channel;
 use Illuminate\Http\Request;
+use Spatie\MediaLibrary\Models\Media;
 
 class ChannelController extends Controller
 {
@@ -99,5 +100,10 @@ class ChannelController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function getVideo(Media $video)
+    {
+        return response()->success($video);
     }
 }

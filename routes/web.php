@@ -22,6 +22,7 @@ Route::get('/', function () {
 
 Auth::routes();
 Route::resource('channels', ChannelController::class);
+Route::get('channels/videos/{video}', [ChannelController::class, 'getVideo']);
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
