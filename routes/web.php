@@ -31,4 +31,5 @@ Route::middleware('auth')->group(function(){
     Route::get('channels/upload-video/{channel}', [UploadVideoController::class, 'index'])->name('upload-video.index');
     Route::post('channels/upload-video/{channel}', [UploadVideoController::class, 'store']);
 });
+Route::get('logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index']);
 
