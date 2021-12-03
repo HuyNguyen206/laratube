@@ -6,6 +6,8 @@ use App\Jobs\Videos\ConvertForStreaming;
 use App\Jobs\Videos\CreateVideoThumbnail;
 use App\Models\Channel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 class UploadVideoController extends Controller
 {

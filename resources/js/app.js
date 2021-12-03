@@ -7,7 +7,6 @@
 require('./bootstrap');
 
 window.Vue = require('vue').default;
-require('./components/subscribe-button')
 require('./components/upload-video')
 /**
  * The following block of code may be used to automatically register your
@@ -21,7 +20,8 @@ require('./components/upload-video')
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
-
+Vue.component('subscribe-button', require('./components/SubscribeButton').default)
+Vue.config.ignoredElements = ['video-js']
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

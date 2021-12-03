@@ -10,6 +10,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\MediaLibrary\Models\Media;
 
 class User extends Authenticatable
 {
@@ -64,4 +65,10 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Channel::class,'subscriptions')->using(Subscription::class)->withPivot('id')->withTimestamps();
     }
+
+    public function canEditVideo(Media $video)
+    {
+        return auth()->check() && $this->id === $video->model->user_id;
+    }
+
 }

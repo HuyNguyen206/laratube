@@ -35,7 +35,7 @@
                                     </p>
                                 </div>
                                 <div class="col-md-4">
-                                    <a :href="`/videos/${video.id}`" target="_blank" v-if="video?.custom_properties?.percentage && video?.custom_properties?.percentage === 100">
+                                    <a :href="`/channels/videos/${video.id}`" target="_blank" v-if="video?.custom_properties?.percentage && video?.custom_properties?.percentage === 100">
                                         @{{ video?.custom_properties?.title }}
                                     </a>
                                     <h4 v-else class="text-danger">

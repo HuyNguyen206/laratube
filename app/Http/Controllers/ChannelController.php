@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ChannelRequest;
 use App\Models\Channel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use Spatie\MediaLibrary\Models\Media;
 
 class ChannelController extends Controller
@@ -102,8 +103,4 @@ class ChannelController extends Controller
         //
     }
 
-    public function getVideo(Media $video)
-    {
-        return response()->success($video);
-    }
 }
