@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ChannelController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\UploadVideoController;
 use App\Http\Controllers\VideoController;
@@ -29,6 +30,7 @@ Route::put('channels/videos/{video}/update', [VideoController::class, 'updateVid
 Route::put('channels/videos/{video}/vote', [VideoController::class, 'voteVideo'])->middleware('auth');
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
+Route::get('videos/{video}/comments', [CommentController::class, 'index']);
 Route::middleware('auth')->group(function(){
 //    Route::resource('channels.subscriptions', SubscriptionController::class)->shallow();
     Route::post('subscribers/channels/{channel}',[SubscriptionController::class, 'toggleSubscriber']);

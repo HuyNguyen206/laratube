@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateVideoDetailRequest;
 use App\Models\Channel;
+use App\Models\Comment;
 use App\Models\Media;
 use Illuminate\Support\Facades\Response;
 

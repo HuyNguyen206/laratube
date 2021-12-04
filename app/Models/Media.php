@@ -12,4 +12,10 @@ class Media extends \Spatie\MediaLibrary\Models\Media
     {
         return $this->morphToMany(User::class, 'votable')->withPivot(['type']);
     }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class, 'media_id')->whereNull('comment_parent_id');
+    }
+
 }

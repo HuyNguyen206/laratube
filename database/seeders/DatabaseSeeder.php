@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Channel;
+use App\Models\Comment;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Arr;
@@ -31,5 +32,6 @@ class DatabaseSeeder extends Seeder
         foreach ($allUser as $user) {
             $user->subscribedChannels()->attach($allChannel->random(rand(10,50))->pluck('id')->toArray());
         }
+        Comment::factory()->count(100)->create();
     }
 }

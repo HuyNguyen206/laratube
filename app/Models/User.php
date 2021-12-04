@@ -17,7 +17,8 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable, HasBelongsToManyEvents;
 
     public $incrementing = false;
-
+    protected $keyType = 'string';
+    protected $appends = ['avatar'];
     /**
      * The attributes that are mass assignable.
      *
@@ -74,6 +75,17 @@ class User extends Authenticatable
     public function voteVideos()
     {
         return $this->morphedByMany(\App\Models\Media::class,'votable')->withTimestamps();
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    public function getAvatarAttribute()
+    {
+        $emailHash = md5(strtolower(trim($this->email)));
+        return "https://www.gravatar.com/avatar/$emailHash&s=20";
     }
 
 }
