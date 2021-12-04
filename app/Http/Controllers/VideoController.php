@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateVideoDetailRequest;
 use App\Models\Channel;
+use App\Models\Media;
 use Illuminate\Support\Facades\Response;
-use Spatie\MediaLibrary\Models\Media;
 
 class VideoController extends Controller
 {
@@ -32,6 +32,25 @@ class VideoController extends Controller
             ->setCustomProperty('description', $validatedData['description'])
             ->save();
         return redirect()->back();
+    }
+
+    public function voteVideo(Media $video)
+    {
+        try {
+            $user = auth()->user();
+            $voter = $video->voters()->where('users.id', $user->id)->first();
+            if (!$voter) {
+                $video->voters()->attach($user->id, ['type' => request()->type]);
+            } else {
+                $video->voters()->detach($user->id);
+                if (request()->type !== $voter->pivot->type) {
+                    $video->voters()->attach($user->id, ['type' => request()->type]);
+                }
+            }
+            return \response()->success($video->load('voters'));
+        }catch (\Throwable $ex) {
+            return \response()->error($ex->getMessage());
+        }
     }
 
 }

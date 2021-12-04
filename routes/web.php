@@ -25,8 +25,8 @@ Auth::routes();
 Route::resource('channels', ChannelController::class);
 Route::get('channels/videos/{video}', [VideoController::class, 'getVideo']);
 Route::put('channels/videos/{video}', [VideoController::class, 'updateVideoView']);
-Route::put('channels/videos/{video}/update/', [VideoController::class, 'updateVideoDetail'])->middleware('auth')->name('videos.update');
-
+Route::put('channels/videos/{video}/update', [VideoController::class, 'updateVideoDetail'])->middleware('auth')->name('videos.update');
+Route::put('channels/videos/{video}/vote', [VideoController::class, 'voteVideo'])->middleware('auth');
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::middleware('auth')->group(function(){

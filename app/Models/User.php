@@ -66,9 +66,14 @@ class User extends Authenticatable
         return $this->belongsToMany(Channel::class,'subscriptions')->using(Subscription::class)->withPivot('id')->withTimestamps();
     }
 
-    public function canEditVideo(Media $video)
+    public function canEditVideo(\App\Models\Media $video)
     {
         return auth()->check() && $this->id === $video->model->user_id;
+    }
+
+    public function voteVideos()
+    {
+        return $this->morphedByMany(\App\Models\Media::class,'votable')->withTimestamps();
     }
 
 }

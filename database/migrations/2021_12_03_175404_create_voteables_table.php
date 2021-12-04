@@ -13,11 +13,11 @@ class CreateVoteablesTable extends Migration
      */
     public function up()
     {
-        Schema::create('voteables', function (Blueprint $table) {
-            $table->uuid();
+        Schema::create('votables', function (Blueprint $table) {
+            $table->id();
             $table->uuid('user_id');
             $table->enum('type', ['up', 'down']);
-            $table->uuidMorphs('voteable');
+            $table->morphs('votable');
             $table->timestamps();
         });
     }
@@ -29,6 +29,6 @@ class CreateVoteablesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('voteables');
+        Schema::dropIfExists('votables');
     }
 }

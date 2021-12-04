@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\MediaService\CustomPath;
+use App\Models\Media;
 
 return [
 
@@ -25,7 +26,7 @@ return [
     /*
      * The fully qualified class name of the media model.
      */
-    'media_model' => Spatie\MediaLibrary\Models\Media::class,
+    'media_model' => Media::class,
 
     's3' => [
         /*
