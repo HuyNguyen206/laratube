@@ -47,6 +47,10 @@ export default {
             type: Object,
             required: true,
             default: {}
+        },
+        type:{
+            type: String,
+            default:'video'
         }
     },
     data() {
@@ -59,10 +63,10 @@ export default {
             if (!authUser) {
                 return alert('Please login to vote')
             }
-            if (authUser.id === this.entity.model.user_id) {
+            if (authUser.id === (this.type === 'video' ? this.entity.model.user_id : this.entity.user_id)) {
                 return alert('You cannot vote your own item')
             }
-            axios.put(`/channels/videos/${this.entity.id}/vote`, {type})
+            axios.put(`/channels/${this.type}/${this.entity.id}/vote`, {type})
                 .then(res => {
                     this.votes = res.data.data.voters
                 })

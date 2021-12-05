@@ -9,12 +9,13 @@
                 <small>{{ reply.body }}</small>
                 <div class="my-1 w-100">
                     <input type="text" class="form-control form-control-sm w-80">
-                    <div class="d-flex align-items-center justify-content-start mt-2">
+                    <div class="d-flex align-items-center justify-content-start my-2">
                         <button class="btn btn-sm btn-primary mr-2">
                             <small>Add comment</small>
                         </button>
                         <span class="text-muted">{{reply.created_at_human}}</span>
                     </div>
+                    <vote type="comment" :default_votes="reply.voters" :entity="reply"></vote>
 
                 </div>
             </div>

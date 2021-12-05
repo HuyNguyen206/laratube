@@ -77,6 +77,11 @@ class User extends Authenticatable
         return $this->morphedByMany(\App\Models\Media::class,'votable')->withTimestamps();
     }
 
+    public function voteComments()
+    {
+        return $this->morphedByMany(\App\Models\Comment::class,'votable')->withTimestamps();
+    }
+
     public function comments()
     {
         return $this->hasMany(Comment::class);

@@ -2285,6 +2285,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //
 //
 //
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "Replies",
@@ -2478,6 +2479,10 @@ __webpack_require__.r(__webpack_exports__);
       type: Object,
       required: true,
       "default": {}
+    },
+    type: {
+      type: String,
+      "default": 'video'
     }
   },
   data: function data() {
@@ -2495,11 +2500,11 @@ __webpack_require__.r(__webpack_exports__);
         return alert('Please login to vote');
       }
 
-      if (authUser.id === this.entity.model.user_id) {
+      if (authUser.id === (this.type === 'video' ? this.entity.model.user_id : this.entity.user_id)) {
         return alert('You cannot vote your own item');
       }
 
-      axios.put("/channels/videos/".concat(this.entity.id, "/vote"), {
+      axios.put("/channels/".concat(this.type, "/").concat(this.entity.id, "/vote"), {
         type: type
       }).then(function (res) {
         _this.votes = res.data.data.voters;
@@ -39524,39 +39529,53 @@ var render = function () {
           _vm._v(" "),
           _c("small", [_vm._v(_vm._s(_vm.comment.body))]),
           _vm._v(" "),
-          _c("div", { staticClass: "my-1 w-100" }, [
-            _vm.isAddComment
-              ? _c("input", {
-                  staticClass: "form-control form-control-sm w-80",
-                  attrs: { type: "text" },
-                })
-              : _vm._e(),
-            _vm._v(" "),
-            _c(
-              "div",
-              {
-                staticClass: "d-flex align-items-center justify-content-start",
-              },
-              [
-                _c(
-                  "button",
-                  {
-                    staticClass: "btn btn-sm btn-primary mr-2",
-                    on: {
-                      click: function ($event) {
-                        _vm.isAddComment = true
+          _c(
+            "div",
+            { staticClass: "my-1 w-100" },
+            [
+              _vm.isAddComment
+                ? _c("input", {
+                    staticClass: "form-control form-control-sm w-80",
+                    attrs: { type: "text" },
+                  })
+                : _vm._e(),
+              _vm._v(" "),
+              _c(
+                "div",
+                {
+                  staticClass:
+                    "d-flex align-items-center justify-content-start mb-2",
+                },
+                [
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-sm btn-primary mr-2",
+                      on: {
+                        click: function ($event) {
+                          _vm.isAddComment = true
+                        },
                       },
                     },
-                  },
-                  [_c("small", [_vm._v("Add comment")])]
-                ),
-                _vm._v(" "),
-                _c("span", { staticClass: "text-muted" }, [
-                  _vm._v(_vm._s(_vm.comment.created_at_human)),
-                ]),
-              ]
-            ),
-          ]),
+                    [_c("small", [_vm._v("Add comment")])]
+                  ),
+                  _vm._v(" "),
+                  _c("span", { staticClass: "text-muted" }, [
+                    _vm._v(_vm._s(_vm.comment.created_at_human)),
+                  ]),
+                ]
+              ),
+              _vm._v(" "),
+              _c("vote", {
+                attrs: {
+                  type: "comment",
+                  default_votes: _vm.comment.voters,
+                  entity: _vm.comment,
+                },
+              }),
+            ],
+            1
+          ),
           _vm._v(" "),
           _c("replies", { attrs: { comment: _vm.comment } }),
         ],
@@ -39702,27 +39721,40 @@ var render = function () {
             _vm._v(" "),
             _c("small", [_vm._v(_vm._s(reply.body))]),
             _vm._v(" "),
-            _c("div", { staticClass: "my-1 w-100" }, [
-              _c("input", {
-                staticClass: "form-control form-control-sm w-80",
-                attrs: { type: "text" },
-              }),
-              _vm._v(" "),
-              _c(
-                "div",
-                {
-                  staticClass:
-                    "d-flex align-items-center justify-content-start mt-2",
-                },
-                [
-                  _vm._m(0, true),
-                  _vm._v(" "),
-                  _c("span", { staticClass: "text-muted" }, [
-                    _vm._v(_vm._s(reply.created_at_human)),
-                  ]),
-                ]
-              ),
-            ]),
+            _c(
+              "div",
+              { staticClass: "my-1 w-100" },
+              [
+                _c("input", {
+                  staticClass: "form-control form-control-sm w-80",
+                  attrs: { type: "text" },
+                }),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  {
+                    staticClass:
+                      "d-flex align-items-center justify-content-start my-2",
+                  },
+                  [
+                    _vm._m(0, true),
+                    _vm._v(" "),
+                    _c("span", { staticClass: "text-muted" }, [
+                      _vm._v(_vm._s(reply.created_at_human)),
+                    ]),
+                  ]
+                ),
+                _vm._v(" "),
+                _c("vote", {
+                  attrs: {
+                    type: "comment",
+                    default_votes: reply.voters,
+                    entity: reply,
+                  },
+                }),
+              ],
+              1
+            ),
           ]),
         ])
       }),

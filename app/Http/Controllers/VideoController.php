@@ -35,20 +35,25 @@ class VideoController extends Controller
         return redirect()->back();
     }
 
-    public function voteVideo(Media $video)
+    public function vote(string $type, int $objectId)
     {
         try {
+            if ($type === 'video') {
+                $object = Media::findOrFail($objectId);
+            } else if ($type === 'comment') {
+                $object = Comment::findOrFail($objectId);
+            }
             $user = auth()->user();
-            $voter = $video->voters()->where('users.id', $user->id)->first();
+            $voter = $object->voters()->where('users.id', $user->id)->first();
             if (!$voter) {
-                $video->voters()->attach($user->id, ['type' => request()->type]);
+                $object->voters()->attach($user->id, ['type' => request()->type]);
             } else {
-                $video->voters()->detach($user->id);
+                $object->voters()->detach($user->id);
                 if (request()->type !== $voter->pivot->type) {
-                    $video->voters()->attach($user->id, ['type' => request()->type]);
+                    $object->voters()->attach($user->id, ['type' => request()->type]);
                 }
             }
-            return \response()->success($video->load('voters'));
+            return \response()->success($object->load('voters'));
         }catch (\Throwable $ex) {
             return \response()->error($ex->getMessage());
         }

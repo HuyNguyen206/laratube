@@ -25,16 +25,16 @@ class CommentFactory extends Factory
         ];
     }
 
-//    public function configure()
-//    {
-//        return $this->afterCreating(function (Comment $comment) {
-//            $comment->comment_parent_id = Arr::random([null, Comment::query()->inRandomOrder()->first('id')->id ?? null]);
-//            if ($comment->comment_parent_id) {
-//                $comment->media_id = Comment::find($comment->comment_parent_id)->media_id;
-//            } else {
-//                $comment->media_id = Media::query()->where('collection_name', 'videos')->inRandomOrder()->first('id')->id;
-//            }
-//            $comment->save();
-//        });
-//    }
+    public function configure()
+    {
+        return $this->afterCreating(function (Comment $comment) {
+            $comment->comment_parent_id = Arr::random([null, Comment::query()->inRandomOrder()->first('id')->id ?? null]);
+            if ($comment->comment_parent_id) {
+                $comment->media_id = Comment::find($comment->comment_parent_id)->media_id;
+            } else {
+                $comment->media_id = Media::query()->where('collection_name', 'videos')->inRandomOrder()->first('id')->id;
+            }
+            $comment->save();
+        });
+    }
 }

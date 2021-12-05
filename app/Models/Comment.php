@@ -35,4 +35,9 @@ class Comment extends Model
     {
         return $this->created_at->diffForHumans();
     }
+
+    public function voters()
+    {
+        return $this->morphToMany(User::class, 'votable')->withPivot(['type']);
+    }
 }

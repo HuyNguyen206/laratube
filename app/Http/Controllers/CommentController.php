@@ -11,11 +11,11 @@ class CommentController extends Controller
     //
     public function index(Media $video)
     {
-        return response()->success($video->comments()->with('user')->withCount('replies')->paginate(10));
+        return response()->success($video->comments()->with(['user', 'voters'])->withCount(['replies'])->paginate(10));
     }
 
     public function getReplies(Comment $comment)
     {
-        return response()->success($comment->replies()->with('user')->paginate(2));
+        return response()->success($comment->replies()->with(['user', 'voters'])->paginate(5));
     }
 }

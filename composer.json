@@ -13,6 +13,7 @@
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
         "laravel/ui": "^3.3",
+        "lehuy/greet": "^2.0.0",
         "pbmedia/laravel-ffmpeg": "^7.5",
         "rap2hpoutre/laravel-log-viewer": "^2.0",
         "spatie/laravel-medialibrary": "^7.20"
@@ -63,5 +64,10 @@
         "sort-packages": true
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "repositories": [{
+        "type": "vcs",
+        "url": "https://github.com/HuyNguyen206/greet"
+    }
+    ]
 }
