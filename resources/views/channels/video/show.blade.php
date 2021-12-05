@@ -85,7 +85,7 @@
 
             </div>
         </div>
-       <comment :video-id="{{$video->id}}"></comment>
+       <list-comment :video-id="{{$video->id}}"></list-comment>
     </div>
 @endsection
 

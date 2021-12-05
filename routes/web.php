@@ -31,6 +31,7 @@ Route::put('channels/videos/{video}/vote', [VideoController::class, 'voteVideo']
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::get('videos/{video}/comments', [CommentController::class, 'index']);
+Route::get('/channels/comments/{comment}/replies', [CommentController::class, 'getReplies']);
 Route::middleware('auth')->group(function(){
 //    Route::resource('channels.subscriptions', SubscriptionController::class)->shallow();
     Route::post('subscribers/channels/{channel}',[SubscriptionController::class, 'toggleSubscriber']);

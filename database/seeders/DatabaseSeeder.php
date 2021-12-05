@@ -33,5 +33,6 @@ class DatabaseSeeder extends Seeder
             $user->subscribedChannels()->attach($allChannel->random(rand(10,50))->pluck('id')->toArray());
         }
         Comment::factory()->count(100)->create();
+//        Comment::factory()->count(10)->create(['media_id' => 72, 'comment_parent_id' => 703]);
     }
 }

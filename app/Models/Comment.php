@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Comment extends Model
 {
+    protected $appends = ['created_at_human'];
     use HasFactory;
 
     public function media()
@@ -27,5 +29,10 @@ class Comment extends Model
     public function parentComment()
     {
         return $this->belongsTo(Comment::class, 'comment_parent_id');
+    }
+
+    public function getCreatedAtHumanAttribute()
+    {
+        return $this->created_at->diffForHumans();
     }
 }
