@@ -30,6 +30,7 @@ Route::put('channels/videos/{video}/update', [VideoController::class, 'updateVid
 Route::put('channels/{type}/{objectId}/vote', [VideoController::class, 'vote'])->middleware('auth'); //type:video/comment
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
+Route::post('videos/comments/store', [CommentController::class, 'storeComment']);
 Route::get('videos/{video}/comments', [CommentController::class, 'index']);
 Route::get('/channels/comments/{comment}/replies', [CommentController::class, 'getReplies']);
 Route::middleware('auth')->group(function(){

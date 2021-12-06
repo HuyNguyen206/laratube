@@ -15,7 +15,7 @@ class Media extends \Spatie\MediaLibrary\Models\Media
 
     public function comments()
     {
-        return $this->hasMany(Comment::class, 'media_id')->whereNull('comment_parent_id');
+        return $this->hasMany(Comment::class, 'media_id')->whereNull('comment_parent_id')->latest('comments.created_at');
     }
 
 }

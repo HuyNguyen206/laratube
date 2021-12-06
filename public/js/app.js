@@ -2068,6 +2068,30 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue_avatar__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue-avatar */ "./node_modules/vue-avatar/dist/vue-avatar.min.js");
 /* harmony import */ var vue_avatar__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue_avatar__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _Replies__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Replies */ "./resources/js/components/Replies.vue");
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -2104,8 +2128,93 @@ __webpack_require__.r(__webpack_exports__);
   props: ['comment'],
   data: function data() {
     return {
-      isAddComment: false
+      body: '',
+      isAddReply: false,
+      dataPagination: {},
+      replies: []
     };
+  },
+  methods: {
+    loadMore: function loadMore() {
+      var _this$dataPagination$,
+          _this = this;
+
+      var url = (_this$dataPagination$ = this.dataPagination.next_page_url) !== null && _this$dataPagination$ !== void 0 ? _this$dataPagination$ : "/channels/comments/".concat(this.comment.id, "/replies");
+      axios.get(url).then(function (res) {
+        var _this$replies;
+
+        _this.dataPagination = res.data.data;
+
+        (_this$replies = _this.replies).push.apply(_this$replies, _toConsumableArray(res.data.data.data));
+
+        var result = [];
+        var map = new Map();
+
+        var _iterator = _createForOfIteratorHelper(_this.replies),
+            _step;
+
+        try {
+          for (_iterator.s(); !(_step = _iterator.n()).done;) {
+            var reply = _step.value;
+
+            if (!map.has(reply.id)) {
+              map.set(reply.id, true); // set any value to Map
+
+              result.push(reply);
+            }
+          }
+        } catch (err) {
+          _iterator.e(err);
+        } finally {
+          _iterator.f();
+        }
+
+        _this.replies = [].concat(result);
+      });
+    },
+    addReply: function addReply() {
+      var _this2 = this;
+
+      if (!this.body) {
+        return alert('Please enter the reply');
+      }
+
+      axios.post("/videos/comments/store", {
+        body: this.body,
+        video_id: this.comment.media_id,
+        comment_parent_id: this.comment.id
+      }).then(function (res) {
+        // this.$emit('addComment', res.data.data)
+        _this2.replies.unshift(res.data.data);
+
+        _this2.body = '';
+
+        _this2.$emit('addNewReply', {
+          comment_id: _this2.comment.id
+        });
+
+        _this2.isAddReply = false;
+      });
+    }
+  },
+  computed: {
+    authUser: function (_authUser) {
+      function authUser() {
+        return _authUser.apply(this, arguments);
+      }
+
+      authUser.toString = function () {
+        return _authUser.toString();
+      };
+
+      return authUser;
+    }(function () {
+      return authUser;
+    }),
+    unreadRepliesCount: function unreadRepliesCount() {
+      var count = this.comment.replies_count - this.replies.length;
+      return count > 0 ? count : null;
+    }
   }
 });
 
@@ -2187,6 +2296,13 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -2202,7 +2318,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     return {
       dataPagination: {},
       comments: [],
-      isAddComment: false
+      isAddComment: false,
+      body: ''
     };
   },
   mounted: function mounted() {
@@ -2224,7 +2341,51 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     },
     loadMore: function loadMore() {
       this.fetchComment();
+    },
+    // handleAddComment(comment){
+    //     this.comments.unshift(comment)
+    // },
+    handleAddNewReply: function handleAddNewReply(data) {
+      this.comments = this.comments.map(function (comment) {
+        if (data.comment_id === comment.id) {
+          comment.replies_count += 1;
+        }
+
+        return comment;
+      });
+    },
+    addComment: function addComment() {
+      var _this2 = this;
+
+      if (!this.body) {
+        return alert('Please enter the comment');
+      }
+
+      axios.post("/videos/comments/store", {
+        body: this.body,
+        video_id: this.videoId
+      }).then(function (res) {
+        // this.$emit('addComment', res.data.data)
+        _this2.comments.unshift(res.data.data);
+
+        _this2.body = '';
+      });
     }
+  },
+  computed: {
+    authUser: function (_authUser) {
+      function authUser() {
+        return _authUser.apply(this, arguments);
+      }
+
+      authUser.toString = function () {
+        return _authUser.toString();
+      };
+
+      return authUser;
+    }(function () {
+      return authUser;
+    })
   }
 });
 
@@ -2243,27 +2404,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var vue_avatar__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue-avatar */ "./node_modules/vue-avatar/dist/vue-avatar.min.js");
 /* harmony import */ var vue_avatar__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue_avatar__WEBPACK_IMPORTED_MODULE_0__);
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
-
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
-
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
-//
-//
-//
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -2289,36 +2429,9 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "Replies",
-  props: ['comment'],
+  props: ['replies'],
   components: {
     Avatar: (vue_avatar__WEBPACK_IMPORTED_MODULE_0___default())
-  },
-  data: function data() {
-    return {
-      replies: [],
-      dataPagination: {}
-    };
-  },
-  methods: {
-    loadMore: function loadMore() {
-      var _this$dataPagination$,
-          _this = this;
-
-      var url = (_this$dataPagination$ = this.dataPagination.next_page_url) !== null && _this$dataPagination$ !== void 0 ? _this$dataPagination$ : "/channels/comments/".concat(this.comment.id, "/replies");
-      axios.get(url).then(function (res) {
-        var _this$replies;
-
-        _this.dataPagination = res.data.data;
-
-        (_this$replies = _this.replies).push.apply(_this$replies, _toConsumableArray(res.data.data.data));
-      });
-    }
-  },
-  computed: {
-    unreadRepliesCount: function unreadRepliesCount() {
-      var count = this.comment.replies_count - this.replies.length;
-      return count > 0 ? count : null;
-    }
   }
 });
 
@@ -39506,8 +39619,8 @@ var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "mt-2 p-1" }, [
-    _c("div", { staticClass: "media my-2" }, [
+  return _c("div", { staticClass: "mt-1 p-1" }, [
+    _c("div", { staticClass: "media" }, [
       _c(
         "a",
         { staticClass: "mr-3", attrs: { href: "" } },
@@ -39533,31 +39646,27 @@ var render = function () {
             "div",
             { staticClass: "my-1 w-100" },
             [
-              _vm.isAddComment
-                ? _c("input", {
-                    staticClass: "form-control form-control-sm w-80",
-                    attrs: { type: "text" },
-                  })
-                : _vm._e(),
-              _vm._v(" "),
               _c(
                 "div",
                 {
                   staticClass:
-                    "d-flex align-items-center justify-content-start mb-2",
+                    "d-flex align-items-center justify-content-start",
                 },
                 [
                   _c(
-                    "button",
+                    "a",
                     {
-                      staticClass: "btn btn-sm btn-primary mr-2",
+                      staticClass: "mr-3",
+                      class: { "btn btn-danger": _vm.isAddReply },
+                      attrs: { href: "" },
                       on: {
                         click: function ($event) {
-                          _vm.isAddComment = true
+                          $event.preventDefault()
+                          _vm.isAddReply = !_vm.isAddReply
                         },
                       },
                     },
-                    [_c("small", [_vm._v("Add comment")])]
+                    [_vm._v(_vm._s(_vm.isAddReply ? "Cancel" : "Add reply"))]
                   ),
                   _vm._v(" "),
                   _c("span", { staticClass: "text-muted" }, [
@@ -39577,7 +39686,70 @@ var render = function () {
             1
           ),
           _vm._v(" "),
-          _c("replies", { attrs: { comment: _vm.comment } }),
+          _vm.authUser && _vm.isAddReply
+            ? _c("div", [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.body,
+                      expression: "body",
+                    },
+                  ],
+                  staticClass: "form-control form-control-sm w-80",
+                  attrs: { type: "text" },
+                  domProps: { value: _vm.body },
+                  on: {
+                    keypress: function ($event) {
+                      if (
+                        !$event.type.indexOf("key") &&
+                        _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                      ) {
+                        return null
+                      }
+                      return _vm.addReply.apply(null, arguments)
+                    },
+                    input: function ($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.body = $event.target.value
+                    },
+                  },
+                }),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-sm btn-primary mr-2 mt-2",
+                    on: { click: _vm.addReply },
+                  },
+                  [_c("small", [_vm._v("Add reply")])]
+                ),
+              ])
+            : _vm._e(),
+          _vm._v(" "),
+          _c("replies", { attrs: { replies: _vm.replies } }),
+          _vm._v(" "),
+          _c("div", { staticClass: "text-center" }, [
+            _vm.unreadRepliesCount || this.dataPagination.next_page_url
+              ? _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-success",
+                    on: { click: _vm.loadMore },
+                  },
+                  [
+                    _vm._v(
+                      "\n                    " +
+                        _vm._s(_vm.unreadRepliesCount) +
+                        " replies left\n                "
+                    ),
+                  ]
+                )
+              : _vm._e(),
+          ]),
         ],
         1
       ),
@@ -39659,8 +39831,56 @@ var render = function () {
     "div",
     { staticClass: "card mt-2 p-5" },
     [
+      _vm.authUser
+        ? _c("div", [
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.body,
+                  expression: "body",
+                },
+              ],
+              staticClass: "form-control form-control-sm w-80",
+              attrs: { type: "text" },
+              domProps: { value: _vm.body },
+              on: {
+                keypress: function ($event) {
+                  if (
+                    !$event.type.indexOf("key") &&
+                    _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                  ) {
+                    return null
+                  }
+                  return _vm.addComment.apply(null, arguments)
+                },
+                input: function ($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.body = $event.target.value
+                },
+              },
+            }),
+            _vm._v(" "),
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-sm btn-primary mr-2 mt-2",
+                on: { click: _vm.addComment },
+              },
+              [_c("small", [_vm._v("Add comment")])]
+            ),
+          ])
+        : _vm._e(),
+      _vm._v(" "),
       _vm._l(_vm.comments, function (comment, index) {
-        return _c("comment", { key: index, attrs: { comment: comment } })
+        return _c("comment", {
+          key: index,
+          attrs: { comment: comment },
+          on: { addNewReply: _vm.handleAddNewReply },
+        })
       }),
       _vm._v(" "),
       _c("div", { staticClass: "text-center" }, [
@@ -39704,90 +39924,54 @@ var render = function () {
   return _c(
     "div",
     { staticClass: "mt-3" },
-    [
-      _vm._l(_vm.replies, function (reply, indexR) {
-        return _c("div", { key: indexR, staticClass: "media mt-1" }, [
+    _vm._l(_vm.replies, function (reply, indexR) {
+      return _c("div", { key: indexR, staticClass: "media my-3" }, [
+        _c(
+          "a",
+          { staticClass: "mr-3", attrs: { href: "" } },
+          [_c("avatar", { attrs: { size: 30, username: reply.user.name } })],
+          1
+        ),
+        _vm._v(" "),
+        _c("div", { staticClass: "media-body" }, [
+          _c("h6", { staticClass: "my-0" }, [_vm._v(_vm._s(reply.user.name))]),
+          _vm._v(" "),
+          _c("small", [_vm._v(_vm._s(reply.body))]),
+          _vm._v(" "),
           _c(
-            "a",
-            { staticClass: "mr-3", attrs: { href: "" } },
-            [_c("avatar", { attrs: { size: 30, username: reply.user.name } })],
+            "div",
+            { staticClass: "my-0 w-100" },
+            [
+              _c(
+                "div",
+                {
+                  staticClass:
+                    "d-flex align-items-center justify-content-start my-0",
+                },
+                [
+                  _c("span", { staticClass: "text-muted" }, [
+                    _vm._v(_vm._s(reply.created_at_human)),
+                  ]),
+                ]
+              ),
+              _vm._v(" "),
+              _c("vote", {
+                attrs: {
+                  type: "comment",
+                  default_votes: reply.voters,
+                  entity: reply,
+                },
+              }),
+            ],
             1
           ),
-          _vm._v(" "),
-          _c("div", { staticClass: "media-body" }, [
-            _c("h6", { staticClass: "mt-0" }, [
-              _vm._v(_vm._s(reply.user.name)),
-            ]),
-            _vm._v(" "),
-            _c("small", [_vm._v(_vm._s(reply.body))]),
-            _vm._v(" "),
-            _c(
-              "div",
-              { staticClass: "my-1 w-100" },
-              [
-                _c("input", {
-                  staticClass: "form-control form-control-sm w-80",
-                  attrs: { type: "text" },
-                }),
-                _vm._v(" "),
-                _c(
-                  "div",
-                  {
-                    staticClass:
-                      "d-flex align-items-center justify-content-start my-2",
-                  },
-                  [
-                    _vm._m(0, true),
-                    _vm._v(" "),
-                    _c("span", { staticClass: "text-muted" }, [
-                      _vm._v(_vm._s(reply.created_at_human)),
-                    ]),
-                  ]
-                ),
-                _vm._v(" "),
-                _c("vote", {
-                  attrs: {
-                    type: "comment",
-                    default_votes: reply.voters,
-                    entity: reply,
-                  },
-                }),
-              ],
-              1
-            ),
-          ]),
-        ])
-      }),
-      _vm._v(" "),
-      _c("div", { staticClass: "text-center" }, [
-        _vm.unreadRepliesCount || this.dataPagination.next_page_url
-          ? _c(
-              "button",
-              { staticClass: "btn btn-success", on: { click: _vm.loadMore } },
-              [
-                _vm._v(
-                  "\n            " +
-                    _vm._s(_vm.unreadRepliesCount) +
-                    " replies left\n        "
-                ),
-              ]
-            )
-          : _vm._e(),
-      ]),
-    ],
-    2
+        ]),
+      ])
+    }),
+    0
   )
 }
-var staticRenderFns = [
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("button", { staticClass: "btn btn-sm btn-primary mr-2" }, [
-      _c("small", [_vm._v("Add comment")]),
-    ])
-  },
-]
+var staticRenderFns = []
 render._withStripped = true
 
 

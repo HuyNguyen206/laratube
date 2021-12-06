@@ -18,4 +18,13 @@ class CommentController extends Controller
     {
         return response()->success($comment->replies()->with(['user', 'voters'])->paginate(5));
     }
+
+    public function storeComment() {
+        $comment = auth()->user()->comments()->create([
+            'media_id' => \request()->video_id,
+            'body' => \request()->body,
+            'comment_parent_id' => \request('comment_parent_id')
+        ])->load(['user', 'voters']);
+        return response()->success($comment);
+    }
 }

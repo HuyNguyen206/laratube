@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Comment extends Model
 {
+    protected $guarded = [];
     protected $appends = ['created_at_human'];
     use HasFactory;
 
@@ -23,7 +24,7 @@ class Comment extends Model
 
     public function replies()
     {
-        return $this->hasMany(Comment::class, 'comment_parent_id');
+        return $this->hasMany(Comment::class, 'comment_parent_id')->latest();
     }
 
     public function parentComment()
