@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ChannelController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\UploadVideoController;
 use App\Http\Controllers\VideoController;
@@ -18,13 +19,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [HomeController::class, 'index']);
 
 Auth::routes();
 Route::resource('channels', ChannelController::class);
-Route::get('channels/videos/{video}', [VideoController::class, 'getVideo']);
+Route::get('channels/videos/{video}', [VideoController::class, 'getVideo'])->name('videos.show');
 Route::put('channels/videos/{video}', [VideoController::class, 'updateVideoView']);
 Route::put('channels/videos/{video}/update', [VideoController::class, 'updateVideoDetail'])->middleware('auth')->name('videos.update');
 Route::put('channels/{type}/{objectId}/vote', [VideoController::class, 'vote'])->middleware('auth'); //type:video/comment
